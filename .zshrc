@@ -1,4 +1,26 @@
-export PATH=${HOME}/bin:/mnt/c/scripts/rec-scripts:/usr/local/sbin:/usr/sbin:/sbin:$PATH
+CPU=$(uname -m)
+
+case ${CPU} in
+    armv7l)
+        OS="rasp32"
+        ;;
+	aarch64)
+		OS="rasp64"
+        ;;
+    *)
+		if [[ "$(uname -r)" == *Microsoft* ]]; then
+			OS="wsl"
+		else
+			OS="linux"
+		fi		
+        ;;
+esac
+
+export PATH=${HOME}/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH
+
+if [[ "$OS" == "wsl" ]]; then
+	export PATH=/mnt/c/scripts/rec-scripts:$PATH
+fi
 
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
@@ -31,8 +53,11 @@ if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
 fi
 
 source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+
+if [[ "$OS" != "wsl" ]]; then
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
+fi
 
 # Load a few important annexes, without Turbo
 # (this is currently required for annexes)
@@ -62,10 +87,9 @@ zinit light romkatv/powerlevel10k
 #if [[ "$OSTYPE" == "linux-gnu" ]]
 #if [ "$(uname -i)" = "aarch64" ]; then
 
-OS=$(lsb_release -si)
 case ${OS} in
-    Rasp*)
-        zinit ice from"gh-r" as"program" bpick"*linux_arm64.*" pick"*/peco"
+    rasp32)
+        zinit ice from"gh-r" as"program" bpick"*linux_arm.*" pick"*/peco"
         zinit light "peco/peco"
         ;;
     *)
@@ -146,9 +170,22 @@ autoload -U compinit && compinit
 
 
 	### 永続的なalias ###
-	#alias ls="gls --color=auto"
-	#alias ll="exa -l"
-	#alias la="exa -la"
+
+	# exaがインストールされている場合のみ有効化
+	if [[ $(command -v exa) ]]; then
+		alias e='exa --icons --git'
+		alias l=e
+		#alias ls=e
+		alias ea='exa -a --icons --git'
+		alias la=ea
+		alias ee='exa -aahl --icons --git'
+		alias ll=ee
+		alias et='exa -T -L 3 -a -I "node_modules|.git|.cache" --icons'
+		alias lt=et
+		alias eta='exa -T -a -I "node_modules|.git|.cache" --color=always --icons | less -r'
+		alias lta=eta
+		alias l='clear && e'
+	fi
 	
 	alias relogin='exec $SHELL -l'
 
@@ -233,24 +270,6 @@ function _ssh {
 	zle -N peco-cdr
 	bindkey '^e' peco-cdr
 }
-
-# エイリアス設定
-# exaがインストールされている場合のみ有効化
-if [[ $(command -v exa) ]]; then
-  alias e='exa --icons --git'
-  alias l=e
-  #alias ls=e
-  alias ea='exa -a --icons --git'
-  alias la=ea
-  alias ee='exa -aahl --icons --git'
-  alias ll=ee
-  alias et='exa -T -L 3 -a -I "node_modules|.git|.cache" --icons'
-  alias lt=et
-  alias eta='exa -T -a -I "node_modules|.git|.cache" --color=always --icons | less -r'
-  alias lta=eta
-  alias l='clear && e'
-fi
-
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
