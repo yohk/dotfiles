@@ -147,8 +147,8 @@ autoload -U compinit && compinit
 
 	### 永続的なalias ###
 	#alias ls="gls --color=auto"
-	alias ll="exa -l"
-	alias la="exa -la"
+	#alias ll="exa -l"
+	#alias la="exa -la"
 	#alias cat='bat -p'
 	
 	alias relogin='exec $SHELL -l'
