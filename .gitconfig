@@ -1,3 +1,5 @@
 [user]
 	email = kurikawa.code@gmail.com
 	name = yohk
+[credential]
+	helper = store
