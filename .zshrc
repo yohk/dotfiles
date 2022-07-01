@@ -124,6 +124,9 @@ zinit light sharkdp/fd
 zinit ice from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg/rg"
 zinit light BurntSushi/ripgrep
 
+#enhanced
+zinit ice wait'1' lucid pick'init.sh'; zinit light "b4b4r07/enhancd"
+
 # Zsh保管を有効にするおまじない
 zinit ice wait"!0" atinit"zpcompinit; zpcdreplay -q"
 autoload -U compinit && compinit
@@ -219,8 +222,7 @@ prompt_context () { }
 
 
  : "cd先のディレクトリのファイル一覧を表示する" && {
-  [ -z "$ENHANCD_ROOT" ] && function chpwd { tree -L 1 } # enhancdがない場合
-  #[ -z "$ENHANCD_ROOT" ] || export ENHANCD_HOOK_AFTER_CD="tree -L 1" # enhancdがあるときはそのHook機構を使う
+  [ -z "$ENHANCD_ROOT" ] && function chpwd { exa -T -L 1 } # enhancdがない場合
   [ -z "$ENHANCD_ROOT" ] || export ENHANCD_HOOK_AFTER_CD="exa -T -L 1" # enhancdがあるときはそのHook機構を使う
 }
 
@@ -268,7 +270,7 @@ function _ssh {
 		fi
 	}
 	zle -N peco-cdr
-	bindkey '^e' peco-cdr
+	bindkey '^s' peco-cdr
 }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
