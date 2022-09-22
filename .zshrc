@@ -41,8 +41,6 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
-
-
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
     print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
@@ -101,28 +99,109 @@ case ${OS} in
         ;;
 esac
 
+# ghq <- git repo management
 zinit ice from"gh-r" as"program" pick"*/ghq"
 zinit light "x-motemen/ghq"
 
+# hexyl
 zinit ice from"gh-r" as"program" pick"*/hexyl"
 zinit light "sharkdp/hexyl"
 
+# diskus <- df
 zinit ice from"gh-r" as"program" pick"*/diskus"
 zinit light "sharkdp/diskus"
 
-zinit ice from"gh-r" as"program" pick"*/bin/nvim"
-zinit light "neovim/neovim"
+# neovim <- vim
+# zinit ice from"gh-r" as"program" pick"*/bin/nvim"
+# zinit light "neovim/neovim"
 
-# bat
-zinit ice from"gh-r" as"program" mv"bat* -> bat" pick"bat/bat"
+# bat <- cat
+zinit ice from"gh-r" as"program" mv"bat* -> bat" pick"*/bat"
 zinit light sharkdp/bat
 
-# fd
-zinit ice from"gh-r" as"program" mv"fd* -> fd" pick"fd/fd"
+# fd <- find
+zinit ice from"gh-r" as"program" mv"fd* -> fd" pick"*/fd"
 zinit light sharkdp/fd
 
-zinit ice from"gh-r" as"program" mv"ripgrep* -> rg" pick"rg/rg"
-zinit light BurntSushi/ripgrep
+
+#dust <- du
+zinit ice from"gh-r" as"program" mv"dust* -> dust" pick"*/dust"
+zinit light bootandy/dust
+
+#duf <- df
+zinit ice from"gh-r" as"program" pick"*/duf"
+zinit light muesli/duf
+
+
+#bottom <- top
+zinit ice from"gh-r" as"program" pick"bottom/btm"
+zinit light ClementTsang/bottom
+
+#zoxide <- cd
+#zinit ice wait"2" as"command" from"gh-r" lucid \
+#  mv"zoxide*/zoxide -> zoxide" \
+#  atclone"./zoxide init zsh > init.zsh" \
+#  atpull"%atclone" src"init.zsh" nocompile'!'
+#zinit light ajeetdsouza/zoxide
+
+#fzf
+zinit ice from"gh-r" as"program" pick"*/fzf"
+zinit light junegunn/fzf
+
+#delta diff utility
+zinit ice from"gh-r" as"program" pick"*/delta"
+zinit light dandavison/delta
+
+case ${OS} in
+    rasp*)
+		# gping OK
+		zinit ice from"gh-r" as"program" bpick"*armv7*linux*musl*" pick"*/gping"
+		zinit light orf/gping
+		
+		zinit ice from"gh-r" as"program" pick"armv7*linux*/broot"
+		zinit light Canop/broot		
+		
+		# Need cargo or additional installer
+		# Example cargo install bandwhich ripgrep procs gitui grex
+		
+        ;;
+    *)
+		zinit ice from"gh-r" as"program" pick"gping/gping"
+		zinit light orf/gping
+		
+		zinit ice from"gh-r" as"program" pick"x86_64*linux*/broot"
+		zinit light Canop/broot
+		
+		# ridgrip <- grep # apt
+		zinit ice from"gh-r" as"program" mv"ripgrep* -> rg" pick"*/rg"
+		zinit light BurntSushi/ripgrep
+		
+		#procs <- ps # snapd or cargo
+		zinit ice from"gh-r" as"program" pick"*/procs"
+		zinit light dalance/procs
+		
+		#bandwhich # cargo
+		zinit ice from"gh-r" as"program" pick"*/bandwhich"
+		zinit light imsnif/bandwhich
+		
+		#gitui # cargo
+		zinit ice from"gh-r" as"program" pick"*/gitui"
+		zinit light extrawurst/gitui
+		
+		zinit ice from"gh-r" as"program" pick"*/grex" # cargo
+		zinit light pemistahl/grex
+		
+        ;;
+esac
+
+
+# shellharden - cargoでしかinstallできない
+#zinit ice rustup cargo'!shellharden'
+#zinit ice cargo'!shellharden'
+#zinit load zdharma-continuum/null
+#zinit light anordal/shellharden
+
+
 
 #enhanced
 zinit ice wait'1' lucid pick'init.sh'; zinit light "b4b4r07/enhancd"
@@ -189,6 +268,11 @@ autoload -U compinit && compinit
 		alias lta=eta
 		alias l='clear && e'
 	fi
+
+	# zoxideがインストールされている場合のみ有効化
+	#if [[ $(command -v zoxide) ]]; then
+	#	alias cd=z
+	#fi
 	
 	alias relogin='exec $SHELL -l'
 
@@ -270,8 +354,12 @@ function _ssh {
 		fi
 	}
 	zle -N peco-cdr
-	bindkey '^s' peco-cdr
+	#bindkey '^s' peco-cdr
 }
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+
+# help documents
+# https://zenn.dev/xeres/articles/2021-05-05-understanding-zinit-syntax
