@@ -17,6 +17,7 @@ case ${CPU} in
 esac
 
 export PATH=${HOME}/bin:/usr/local/sbin:/usr/sbin:/sbin:$PATH
+export PATH=`find ${HOME}/bin -type d | xargs echo | sed -e 's/ /:/g'`:$PATH
 
 if [[ "$OS" == "wsl" ]]; then
 	export PATH=/mnt/c/scripts/rec-scripts:$PATH
